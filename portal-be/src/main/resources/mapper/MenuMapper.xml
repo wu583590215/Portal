@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sxrcb.portal.mapper.MenuMapper">
+  <resultMap id="BaseResultMap" type="com.sxrcb.portal.entity.Menu">
+    <id column="menu_no" jdbcType="VARCHAR" property="menuNo" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="icon" jdbcType="VARCHAR" property="icon" />
+    <result column="parent_menu_no" jdbcType="VARCHAR" property="parentMenuNo" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from portal_menu
+    where menu_no = #{menuNo,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.sxrcb.portal.entity.Menu">
+    insert into portal_menu (menu_no, menu_name, router, 
+      icon, parent_menu_no)
+    values (#{menuNo,jdbcType=VARCHAR}, #{menuName,jdbcType=VARCHAR}, #{router,jdbcType=VARCHAR}, 
+      #{icon,jdbcType=VARCHAR}, #{parentMenuNo,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.sxrcb.portal.entity.Menu">
+    update portal_menu
+    set menu_name = #{menuName,jdbcType=VARCHAR},
+      router = #{router,jdbcType=VARCHAR},
+      icon = #{icon,jdbcType=VARCHAR},
+      parent_menu_no = #{parentMenuNo,jdbcType=VARCHAR}
+    where menu_no = #{menuNo,jdbcType=VARCHAR}
+  </update>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select menu_no, menu_name, router, icon, parent_menu_no
+    from portal_menu
+    where menu_no = #{menuNo,jdbcType=VARCHAR}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select menu_no, menu_name, router, icon, parent_menu_no
+    from portal_menu
+  </select>
+</mapper>

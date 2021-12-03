@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * 登录dto
+ * @author wuqian
  */
 @Data
 public class LoginDto {

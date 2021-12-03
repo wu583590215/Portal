@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * 用户信息dto
+ * @author wuqian
  */
 @Data
 public class UserInfoDto {

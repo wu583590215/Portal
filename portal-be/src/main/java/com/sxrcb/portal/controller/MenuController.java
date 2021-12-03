@@ -1,12 +1,13 @@
 package com.sxrcb.portal.controller;
+
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.sxrcb.portal.common.Result;
 import com.sxrcb.portal.common.ResultGenerator;
-import com.sxrcb.portal.dto.MenuEditDto;
+import com.sxrcb.portal.dto.MenuRoleEditDto;
 import com.sxrcb.portal.dto.TreeViewDto;
 import com.sxrcb.portal.entity.Menu;
 import com.sxrcb.portal.service.MenuService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -57,14 +58,37 @@ public class MenuController {
         return ResultGenerator.genSuccessResult();
     }
 
+
+    /**
+     * 查询菜单的权限
+     * @param menuNo 菜单编号
+     * @param roleFlag 权限标识
+     * @return
+     */
+    @PostMapping("/roles")
+    public Result findRoles(@RequestParam String menuNo,@RequestParam String roleFlag) {
+        return ResultGenerator.genSuccessResult(menuService.findMenuRoles(menuNo, roleFlag));
+    }
+
+    /**
+     * 修改菜单权限
+     * @param menuRoleEditDto 修改
+     * @return
+     */
+    @PostMapping("/editRoles")
+    public Result editRoles(@RequestBody MenuRoleEditDto menuRoleEditDto) {
+        menuService.editMenuRoles(menuRoleEditDto);
+        return ResultGenerator.genSuccessResult();
+    }
+
     /**
     * 通过主键查询记录
     * @param id 主键
     * @return 结果
     */
     @PostMapping("/detail")
-    public Result<MenuEditDto> detail(@RequestParam String id) {
-        MenuEditDto menu = menuService.findById(id);
+    public Result<Menu> detail(@RequestParam String id) {
+        Menu menu = menuService.findById(id);
         return ResultGenerator.genSuccessResult(menu);
     }
 

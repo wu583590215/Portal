@@ -22,6 +22,10 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Resource
     private DepartmentMapper portalDepartmentMapper;
 
+    /**
+     * 保存
+     * @param portalDepartment
+     */
     @Override
     public void save(Department portalDepartment) {
         portalDepartmentMapper.insert(portalDepartment);
@@ -40,11 +44,20 @@ public class DepartmentServiceImpl implements DepartmentService {
         portalDepartmentMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 更新
+     * @param portalDepartment
+     */
     @Override
     public void update(Department portalDepartment) {
         portalDepartmentMapper.updateByPrimaryKey(portalDepartment);
     }
 
+    /**
+     * 根据主键查询
+     * @param id
+     * @return
+     */
     @Override
     public Department findById(String id) {
         return portalDepartmentMapper.selectByPrimaryKey(id);

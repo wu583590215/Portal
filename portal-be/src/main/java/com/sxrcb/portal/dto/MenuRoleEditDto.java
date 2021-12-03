@@ -5,12 +5,13 @@ import lombok.Data;
 import java.util.List;
 
 /**
- * 用户权限编辑dto
+ * 菜单权限编辑dto
  * @author wuqian
  */
 @Data
-public class UserRoleEditDto {
+public class MenuRoleEditDto {
+    private String menuNo;
+    private String relativeType;
     private List<String> addList;
     private List<String> deleteList;
-    private String userNo;
 }

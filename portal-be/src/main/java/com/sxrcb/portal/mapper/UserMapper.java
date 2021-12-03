@@ -5,6 +5,11 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
+/**
+ * 用户管理mapper
+ *
+ * @author wuqian
+ */
 public interface UserMapper {
     int updatePassword(@Param("userNo") String userNo, @Param("password") String password);
 
@@ -35,6 +40,4 @@ public interface UserMapper {
     int deleteRoles(@Param("roleList") List<String> roleList, @Param("userNo") String userNo);
 
     int deleteAllRoles(@Param("userNo") String userNo);
-
-
 }

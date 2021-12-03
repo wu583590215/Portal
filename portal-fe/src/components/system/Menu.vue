@@ -12,7 +12,7 @@
                         style="font-size: 15px;margin-left: 15px"
                         v-if="show"
                         show-icon
-                        :defaultExpandedKeys="defaultKeys"
+                        :defaultExpandedKeys="['']"
                         :defaultSelectedKeys="defaultKeys"
                         :tree-data="treeData"
                         @select="onSelect"
@@ -43,7 +43,7 @@
 
                 </a-tree>
             </a-col>
-            <a-col :span="17" style="height: 100%;background-color: #ffffff">
+            <a-col :span="17" style="height: 100%;background-color: #ffffff;overflow: auto">
                 <div style="margin-top: 15px">
                     <a-form-model
                             ref="depForm"
@@ -63,43 +63,21 @@
                         <a-form-model-item ref="icon" prop="icon" label="菜单图标">
                             <a-input v-model="formData.icon"/>
                         </a-form-model-item>
-                        <a-form-model-item ref="positions" prop="positions" label="菜单岗位">
-                            <a-checkbox-group
-                                    style="width: 100%;margin-top: 10px"
-                                    v-model="formData.positions"
-                                    name="checkboxgroup"
-                            >
-                                <a-row>
-                                    <a-col :key="option.positionNo" v-for="option in positionList" :span="8">
-                                        <a-checkbox :checked="true" :value="option.positionNo">
-                                            {{option.positionName}}
-                                        </a-checkbox>
-                                    </a-col>
-                                </a-row>
-                            </a-checkbox-group>
+                        <a-form-model-item ref="roleFlag" prop="roleFlag" label="权限标识">
+                            <a-select v-model="formData.roleFlag" >
+                                <a-select-option :key="opt.codeNo"
+                                                 v-for="opt in codeLibrary.RoleFlag" :value="opt.codeNo">{{opt.codeName}}</a-select-option>
+                            </a-select>
                         </a-form-model-item>
-
-                        <a-form-model-item ref="roles" prop="roles" label="菜单角色">
-                            <a-checkbox-group
-                                    style="width: 100%;margin-top: 10px"
-                                    v-model="formData.roles"
-                                    name="checkboxgroup"
-                            >
-                                <a-row>
-                                    <a-col :key="option.roleNo" v-for="option in roleList" :span="8">
-                                        <a-checkbox :checked="true" :value="option.roleNo">
-                                            {{option.roleName}}
-                                        </a-checkbox>
-                                    </a-col>
-                                </a-row>
-                            </a-checkbox-group>
-
-                        </a-form-model-item>
-
-
                         <a-form-model-item :wrapper-col="{ span: 14, offset: 4 }">
-                            <a-button type="primary" @click="onSubmit">
+                            <a-button type="primary" icon="save" @click="onSubmit">
                                 保存
+                            </a-button>
+                            <a-button @click="editPosition" icon="audit" style="margin-left: 8px">
+                                设置岗位
+                            </a-button>
+                            <a-button @click="editRole" icon="key" style="margin-left: 8px">
+                                设置角色
                             </a-button>
                         </a-form-model-item>
                     </a-form-model>
@@ -127,16 +105,18 @@
                 <a-form-model-item ref="icon" prop="icon" label="菜单图标">
                     <a-input v-model="addFormData.icon"/>
                 </a-form-model-item>
-
+                <a-form-model-item ref="roleFlag" prop="roleFlag" label="权限标识">
+                    <a-input v-model="formData.roleFlag"/>
+                </a-form-model-item>
             </a-form-model>
-
-
         </a-modal>
-
     </div>
 </template>
 
 <script>
+    import RoleSelect from "@/components/common/RoleSelect";
+    import PositionSelect from "@/components/common/PositionSelect";
+
     const formRules = {
         menuName: [
             {required: true, message: '请输入菜单名称', trigger: 'blur'},
@@ -157,6 +137,9 @@
         positions: [
             {required: true, message: '请选择菜单岗位', trigger: 'blur'},
         ]  ,
+        roleFlag: [
+            {required: true, message: '请选择菜单权限标识', trigger: 'blur'},
+        ]  ,
         roles: [
             {required: true, message: '请选择菜单角色', trigger: 'blur'},
         ]
@@ -166,9 +149,14 @@
         name: "Menu",
         data() {
             return {
-                treeData: [],
+                treeData: [{
+                    title: '系统菜单列表',
+                    key: '',
+                    disabled: true,
+                    children: []
+                }],
                 show: false,
-                defaultKeys: ["000"],
+                defaultKeys: ["100"],
                 labelCol: {span: 4},
                 wrapperCol: {span: 14},
                 formData: {},
@@ -176,10 +164,67 @@
                 formRules,
                 visible: false,
                 roleList: [],
-                positionList: []
+                positionList: [],
+                codeLibrary: {}
             };
         },
         methods: {
+            // 设置角色
+            editRole: function () {
+                var that = this;
+                var menuNo = this.formData.menuNo;
+                that.$axios.post("menu/roles?menuNo=" + menuNo+"&roleFlag=01").then(function (roleList) {
+                        that.$modal.show(
+                            RoleSelect,
+                            {defaultValue: roleList},
+                            {width: 550, height: 400, clickToClose: false},
+                            {
+                                'before-close': function (res) {
+                                    if (res.params) {
+                                        var editData = {};
+                                        editData.menuNo = menuNo;
+                                        editData.relativeType = "01";
+                                        editData.addList = that._.difference(res.params, roleList);
+                                        editData.deleteList = that._.difference(roleList,res.params);
+
+                                        that.$axios.post("menu/editRoles", editData).then(function () {
+                                            that.$message.success('设置成功！');
+                                        });
+                                    }
+                                },
+                            }
+                        );
+                });
+
+            },
+            // 设置岗位
+            editPosition: function () {
+                var that = this;
+                var menuNo = this.formData.menuNo;
+                that.$axios.post("menu/roles?menuNo=" + menuNo+"&roleFlag=02").then(function (posList) {
+
+                        that.$modal.show(
+                            PositionSelect,
+                            {defaultValue: posList},
+                            {width: 550, height: 400, clickToClose: false},
+                            {
+                                'before-close': function (res) {
+                                    if (res.params) {
+                                        var editData = {};
+                                        editData.menuNo = menuNo;
+                                        editData.relativeType = "02";
+                                        editData.addList = that._.difference(res.params, posList);
+                                        editData.deleteList = that._.difference(posList,res.params);
+
+                                        that.$axios.post("menu/editRoles", editData).then(function () {
+                                            that.$message.success('设置成功！');
+                                        });
+                                    }
+                                },
+                            }
+                        );
+                    });
+            },
             // 新增菜单
             addMenu: function (key) {
                 this.addFormData = {};
@@ -233,7 +278,7 @@
             getOrgTree: function () {
                 var that = this;
                 this.$axios.post("menu/getMenuTree").then(function (res) {
-                    that.treeData = res;
+                    that.treeData[0].children = res;
                     that.show = true;
                 })
             },
@@ -248,6 +293,10 @@
             this.$axios.post("position/list").then(function (res) {
                 that.positionList = res.list;
             })
+
+            that.commonUtils.getCodeLibrary(['RoleFlag'],function (res) {
+                that.codeLibrary = res;
+            });
         }
 
     }

@@ -21,6 +21,10 @@ public class PositionServiceImpl implements PositionService {
     @Resource
     private PositionMapper portalPositionMapper;
 
+    /**
+     * 保存
+     * @param portalPosition 实体对象
+     */
     @Override
     public void save(Position portalPosition) {
         Position position = portalPositionMapper.selectByPrimaryKey(portalPosition.getPositionNo());
@@ -31,21 +35,39 @@ public class PositionServiceImpl implements PositionService {
         }
     }
 
+    /**
+     * 通过主键删除
+     * @param id 主键
+     */
     @Override
     public void deleteById(String id) {
         portalPositionMapper.deleteByPrimaryKey(id);
     }
 
+    /**
+     * 更新
+     * @param portalPosition
+     */
     @Override
     public void update(Position portalPosition) {
         portalPositionMapper.updateByPrimaryKey(portalPosition);
     }
 
+    /**
+     * 通过主键查询
+     * @param id
+     * @return
+     */
     @Override
     public Position findById(String id) {
         return portalPositionMapper.selectByPrimaryKey(id);
     }
 
+    /**
+     * 查询所有
+     * @param position
+     * @return
+     */
     @Override
     public List<Position> findAll(Position position) {
         return portalPositionMapper.selectAll(position);

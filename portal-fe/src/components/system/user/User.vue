@@ -205,19 +205,19 @@
                 var that = this;
                 if (this.isSelect) {
                     var userNo = this.selectedRow[0].userNo;
-                    that.$axios.post("user/roleList?userNo=" + userNo).then(function (posList) {
+                    that.$axios.post("user/roleList?userNo=" + userNo).then(function (roleList) {
 
                         that.$modal.show(
                             RoleSelect,
-                            {defaultValue: posList},
+                            {defaultValue: roleList},
                             {width: 550, height: 400, clickToClose: false},
                             {
                                 'before-close': function (res) {
                                     if (res.params) {
                                         var editPosition = {};
                                         editPosition.userNo = userNo;
-                                        editPosition.addList = that._.difference(res.params, posList);
-                                        editPosition.deleteList = that._.difference(posList,res.params);
+                                        editPosition.addList = that._.difference(res.params, roleList);
+                                        editPosition.deleteList = that._.difference(roleList,res.params);
 
                                         that.$axios.post("user/editUserRole", editPosition).then(function () {
                                             that.$message.success('设置成功！');

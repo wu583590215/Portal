@@ -4,6 +4,7 @@ import lombok.Data;
 
 /**
  * 修改密码dto
+ * @author wuqian
  */
 @Data
 public class EditPasswordDto {

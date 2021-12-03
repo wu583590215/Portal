@@ -17,7 +17,6 @@ import javax.annotation.Resource;
 import java.util.List;
 
 
-
 /**
  * Created by Wuqian on 2021/10/26.
  */
@@ -31,6 +30,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 修改密码
+     *
      * @param editPasswordDto
      */
     @Override
@@ -39,13 +39,14 @@ public class UserServiceImpl implements UserService {
         String localPassword = this.findById(userInfo.getUserNo()).getPassword();
         if (!localPassword.equals(editPasswordDto.getOldPassword())) {
             throw new ServiceException("原密码输入不正确");
-        }else {
+        } else {
             portalUserMapper.updatePassword(userInfo.getUserNo(), editPasswordDto.getNewPassword());
         }
     }
 
     /**
      * 新增用户
+     *
      * @param portalUser
      */
     @Override
@@ -55,6 +56,11 @@ public class UserServiceImpl implements UserService {
         portalUserMapper.insert(portalUser);
     }
 
+    /**
+     * 删除用户，同时删除关联的岗位和角色
+     *
+     * @param id
+     */
     @Override
     public void deleteById(String id) {
         portalUserMapper.deleteByPrimaryKey(id);
@@ -64,18 +70,30 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 重置密码
+     *
      * @param id
      */
     @Override
     public void resetPassword(String id) {
-        portalUserMapper.resetPassword(id,DigestUtils.md5DigestAsHex(DEFAULT_PASSWORD.getBytes()));
+        portalUserMapper.resetPassword(id, DigestUtils.md5DigestAsHex(DEFAULT_PASSWORD.getBytes()));
     }
 
+    /**
+     * 更新用户信息
+     *
+     * @param portalUser
+     */
     @Override
     public void update(User portalUser) {
         portalUserMapper.updateByPrimaryKey(portalUser);
     }
 
+    /**
+     * 查询用户信息
+     *
+     * @param id
+     * @return
+     */
     @Override
     public User findById(String id) {
         return portalUserMapper.selectByPrimaryKey(id);
@@ -84,6 +102,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 获取用户角色
+     *
      * @param userNo
      * @return
      */
@@ -94,6 +113,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 获取用户岗位列表
+     *
      * @param userNo
      * @return
      */
@@ -104,6 +124,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 编辑用户的岗位
+     *
      * @param editUserPosition
      */
     @Override
@@ -122,6 +143,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * 编辑用户的岗位
+     *
      * @param editUserPosition
      */
     @Override
@@ -138,12 +160,15 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    /**
+     * 查询所有用户
+     *
+     * @return
+     */
     @Override
     public List<User> findAll() {
         return portalUserMapper.selectAll();
     }
-
-
 
 
 }

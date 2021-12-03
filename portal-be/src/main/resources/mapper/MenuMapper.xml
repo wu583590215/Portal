@@ -5,34 +5,73 @@
     <id column="menu_no" jdbcType="VARCHAR" property="menuNo" />
     <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
     <result column="router" jdbcType="VARCHAR" property="router" />
+    <result column="role_flag" jdbcType="VARCHAR" property="roleFlag" />
     <result column="icon" jdbcType="VARCHAR" property="icon" />
     <result column="parent_menu_no" jdbcType="VARCHAR" property="parentMenuNo" />
   </resultMap>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+  
+  <select id="selectMenuRel" parameterType="java.lang.String" resultType="java.lang.String">
+    select relative_no from portal_menu_relative
+    where menu_no = #{menuNo,jdbcType=VARCHAR}
+    and relative_type = #{relativeType,jdbcType=VARCHAR}
+  </select>
+  
+  <delete id="deleteMenu" parameterType="java.lang.String">
     delete from portal_menu
     where menu_no = #{menuNo,jdbcType=VARCHAR}
   </delete>
+  <delete id="deleteAllMenuRel" parameterType="java.lang.String">
+    delete from portal_menu_relative
+    where menu_no = #{menuNo,jdbcType=VARCHAR}
+  </delete>
+
   <insert id="insert" parameterType="com.sxrcb.portal.entity.Menu">
     insert into portal_menu (menu_no, menu_name, router, 
-      icon, parent_menu_no)
+      icon, parent_menu_no,role_flag)
     values (#{menuNo,jdbcType=VARCHAR}, #{menuName,jdbcType=VARCHAR}, #{router,jdbcType=VARCHAR}, 
-      #{icon,jdbcType=VARCHAR}, #{parentMenuNo,jdbcType=VARCHAR})
+      #{icon,jdbcType=VARCHAR}, #{parentMenuNo,jdbcType=VARCHAR},#{roleFlag,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.sxrcb.portal.entity.Menu">
     update portal_menu
     set menu_name = #{menuName,jdbcType=VARCHAR},
       router = #{router,jdbcType=VARCHAR},
       icon = #{icon,jdbcType=VARCHAR},
-      parent_menu_no = #{parentMenuNo,jdbcType=VARCHAR}
+      parent_menu_no = #{parentMenuNo,jdbcType=VARCHAR},
+      role_flag = #{roleFlag,jdbcType=VARCHAR}
     where menu_no = #{menuNo,jdbcType=VARCHAR}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select menu_no, menu_name, router, icon, parent_menu_no
+    select menu_no, menu_name, router, icon, parent_menu_no,role_flag
     from portal_menu
     where menu_no = #{menuNo,jdbcType=VARCHAR}
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
-    select menu_no, menu_name, router, icon, parent_menu_no
+    select menu_no, menu_name, router, icon, parent_menu_no,role_flag
     from portal_menu
   </select>
+  <insert id="insertMenuRel">
+    INSERT INTO portal_menu_relative (menu_no,relative_no,relative_type)
+    VALUES
+    <foreach collection="noList" item="item" index="index" separator=",">
+      (
+      #{menuNo},
+      #{item},
+      #{type}
+      )
+    </foreach>
+  </insert>
+
+
+  <delete id="deleteMenuRel">
+    delete from portal_menu_relative
+    where menu_no = #{menuNo}
+    and relative_type = #{relativeType}
+    and relative_no in
+    (
+    <foreach collection="deleteList" item="item" index="index" separator=",">
+      #{item}
+    </foreach>
+    )
+  </delete>
+
 </mapper>

@@ -1,8 +1,13 @@
 package com.sxrcb.portal.mapper;
 
 import com.sxrcb.portal.entity.Position;
+
 import java.util.List;
 
+/**
+ * 岗位查询mapper
+ * @author wuqian
+ */
 public interface PositionMapper {
     int deleteByPrimaryKey(String positionNo);
 

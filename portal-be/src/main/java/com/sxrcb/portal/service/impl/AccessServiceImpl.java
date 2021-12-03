@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+/**
+ * @author wuqian
+ */
 @Service
 @Transactional
 public class AccessServiceImpl implements AccessService {
@@ -21,6 +24,7 @@ public class AccessServiceImpl implements AccessService {
 
     /**
      * 登录
+     *
      * @param loginDto
      */
     @Override
@@ -30,11 +34,11 @@ public class AccessServiceImpl implements AccessService {
         User user = userService.findById(userNo);
         if (user == null) {
             throw new ServiceException("登录失败！用户名错误");
-        }else if(!UserStatus._01.getCode().equals(user.getStatus())) {
+        } else if (!UserStatus._01.getCode().equals(user.getStatus())) {
             throw new ServiceException("登录失败！用户状态异常，请联系系统管理员");
-        }else if (!user.getPassword().equals(password)) {
+        } else if (!user.getPassword().equals(password)) {
             throw new ServiceException("登录失败！密码错误");
-        }else {
+        } else {
             // 登录成功
             StpUtil.login(userNo);
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();

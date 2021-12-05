@@ -10,12 +10,13 @@
                 </div>
             </div>
             <span style="font-size: 18px;color: #ffffff;display: table"
-                  :class="{selected: menuitem.router === selectedMenu}" v-for="menuitem in menuList"
+                  :class="{selected: menuitem.router === selectedTopMenuName}" v-for="menuitem in menuList"
                   :key="menuitem.router">
                 <div class="menuItems">
-                    <div class="hoverBg"  @click="goRouter(menuitem.router)" style="height: 30px;width: 100px;text-align: center;border-radius:2px;cursor: pointer">
+                    <div class="hoverBg" @click="goRouter(menuitem)"
+                         style="height: 30px;width: 100px;text-align: center;border-radius:2px;cursor: pointer">
                         <a-icon :type="menuitem.icon" style="margin-right: 5px"/>
-                        <span class="menuName" >
+                        <span class="menuName">
                             {{menuitem.menuName}}
                         </span>
                     </div>
@@ -31,10 +32,14 @@
                         </div>
                         <a-menu slot="overlay">
                             <a-menu-item>
-                                <a @click="editPassword" href="javascript:;"><a-icon type="key" style="margin-right: 6px"/>修改密码</a>
+                                <a @click="editPassword" href="javascript:;">
+                                    <a-icon type="key" style="margin-right: 6px"/>
+                                    修改密码</a>
                             </a-menu-item>
                             <a-menu-item>
-                                <a @click="logout" href="javascript:;"><a-icon type="poweroff"  style="margin-right: 6px" />退出登录</a>
+                                <a @click="logout" href="javascript:;">
+                                    <a-icon type="poweroff" style="margin-right: 6px"/>
+                                    退出登录</a>
                             </a-menu-item>
                         </a-menu>
                     </a-dropdown>
@@ -43,8 +48,15 @@
         </div>
         <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
             <div class="container">
-                <router-view style="animation-duration: 0.2s;"></router-view>
+                <!--第一层菜单-->
+                <router-view v-if="selectedMenuItem !== null && selectedMenuItem.children.length === 0"
+                             style="animation-duration: 0.2s;"></router-view>
+
+                <!--第二层菜单-->
+                <router-view v-if="selectedMenuItem !== null && selectedMenuItem.children.length > 0"
+                             :menus="selectedMenuItem.children"></router-view>
             </div>
+
         </transition>
     </div>
 </template>
@@ -58,31 +70,32 @@
         name: "Index",
         data: function () {
             return {
-                selectedMenu: 'home',
-                menuList: [
-                    {menuName: '门户主页', router: 'home', icon: 'home'},
-                    {menuName: '客户关系', router: 'customer', icon: 'user'},
-                    {menuName: '系统管理', router: 'system', icon: 'setting'},
-                ],
+                selectedTopMenuName: 'home',
+                selectedMenu: [],
+                selectedMenuItem: null,
+                menuList: [],
                 userName: '系统管理员'
-
             }
         },
         methods: {
             // 路由跳转
-            goRouter: function (routeName) {
-                this.selectedMenu = routeName;
-                router.push({name: routeName})
+            goRouter: function (menuItem) {
+                this.selectedMenuItem = menuItem;
+                this.selectedTopMenuName = menuItem.router;
+                router.push({name: menuItem.router})
+            },
+            // 二级菜单跳转
+            handleClick(e) {
+                router.push({name: e.key})
             },
             // 修改密码
             editPassword: function () {
                 this.$modal.show(
                     EditPassword,
                     null,
-                    {width: 550, height: 400,clickToClose: false},
+                    {width: 550, height: 400, clickToClose: false},
                     {
                         'before-close': function () {
-
                         },
                     }
                 )
@@ -93,14 +106,19 @@
                     // 清楚前端缓存
                     sessionStorage.removeItem("satoken");
                     sessionStorage.removeItem("userInfo");
-
                     router.push({name: "login"})
                 });
-           }
+            }
         },
-        mounted: function () {
+        beforeCreate: function () {
             // 进页面时获取路由名称
-            this.selectedMenu = this.$route.name;
+            var that = this;
+            this.$axios.post("menu/getMenuRouter").then(function (res) {
+                that.menuList = res;
+                // 获取一级菜单的name
+                that.selectedTopMenuName = that.$route.matched[1].name;
+                that.selectedMenuItem = that._.find(res,{"router": that.selectedTopMenuName});
+            });
         }
     }
 </script>

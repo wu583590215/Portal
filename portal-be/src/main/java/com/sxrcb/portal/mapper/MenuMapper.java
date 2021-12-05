@@ -10,6 +10,11 @@ import java.util.List;
  * @author wuqian
  */
 public interface MenuMapper {
+    int checkMenuRole(@Param("roleList") List<String> roleList,
+                      @Param("menuNo") String menuNo,
+                      @Param("relativeType") String relativeType
+    );
+
     int deleteMenu(String menuNo);
 
     int deleteAllMenuRel(String menuNo);

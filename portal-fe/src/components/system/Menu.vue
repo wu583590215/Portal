@@ -106,7 +106,10 @@
                     <a-input v-model="addFormData.icon"/>
                 </a-form-model-item>
                 <a-form-model-item ref="roleFlag" prop="roleFlag" label="权限标识">
-                    <a-input v-model="formData.roleFlag"/>
+                    <a-select v-model="addFormData.roleFlag" >
+                        <a-select-option :key="opt.codeNo"
+                                         v-for="opt in codeLibrary.RoleFlag" :value="opt.codeNo">{{opt.codeName}}</a-select-option>
+                    </a-select>
                 </a-form-model-item>
             </a-form-model>
         </a-modal>

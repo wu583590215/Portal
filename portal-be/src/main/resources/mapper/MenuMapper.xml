@@ -74,4 +74,16 @@
     )
   </delete>
 
+  <select id="checkMenuRole" resultType="java.lang.Integer">
+    select count(1) from portal_menu_relative
+    where menu_no = #{menuNo}
+    and relative_type = #{relativeType}
+    and relative_no in
+    (
+    <foreach collection="roleList" item="item" index="index" separator=",">
+      #{item}
+    </foreach>
+    )
+  </select>
+
 </mapper>

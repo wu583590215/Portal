@@ -4,12 +4,12 @@ import Login from "../components/login/Login";
 import Test from "../components/test";
 import Index from "@/components/index/Index";
 import Home from "@/components/home/Home";
-import SystemMenu from "@/components/system/SystemMenu";
 import Department from "@/components/system/Department";
-import Employee from "@/components/system/user/User";
+import User from "@/components/system/user/User";
 import Position from "@/components/system/Position";
 import Role from "@/components/system/Role";
 import Menu from "@/components/system/Menu";
+import SecondaryIndex from "@/components/index/SecondaryIndex";
 
 Vue.use(Router)
 
@@ -25,15 +25,15 @@ export default new Router({
         {path: '/login', name: 'login', component: Login},
         {path: '/test', name: 'test', component: Test},
         {
-            path: '/portal', name: 'index', component: Index,redirect:{name: 'home'}, children: [
+            path: '/portal', name: 'index', component: Index, redirect: {name: 'home'}, children: [
                 {path: 'home', name: 'home', component: Home},
                 {
-                    path: 'system', name: 'system', redirect:{name: 'employee'}, component: SystemMenu, children: [
-                        {path: 'department', name: 'department', component: Department},
-                        {path: 'employee', name: 'employee', component: Employee},
-                        {path: 'position', name: 'position', component: Position},
-                        {path: 'role', name: 'role', component: Role},
-                        {path: 'menu', name: 'menu', component: Menu}
+                    path: 'system', name: 'system', redirect: {name: 'user'}, component: SecondaryIndex, children: [
+                        {path: 'department', name: 'department', component: Department, meta: {parentRouter: 'system'}},
+                        {path: 'user', name: 'user', component: User, meta: {parentRouter: 'system'}},
+                        {path: 'position', name: 'position', component: Position, meta: {parentRouter: 'system'}},
+                        {path: 'role', name: 'role', component: Role, meta: {parentRouter: 'system'}},
+                        {path: 'menu', name: 'menu', component: Menu, meta: {parentRouter: 'system'}}
                     ]
                 },
             ]

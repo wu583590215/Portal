@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.sxrcb.portal.common.Result;
 import com.sxrcb.portal.common.ResultGenerator;
 import com.sxrcb.portal.dto.MenuRoleEditDto;
+import com.sxrcb.portal.dto.MenuRouterDto;
 import com.sxrcb.portal.dto.TreeViewDto;
 import com.sxrcb.portal.entity.Menu;
 import com.sxrcb.portal.service.MenuService;
@@ -15,10 +16,11 @@ import java.util.List;
 
 
 /**
-* Menu控制层代码
-* @date 2021/11/18
-* @author Wuqian
-*/
+ * Menu控制层代码
+ *
+ * @author Wuqian
+ * @date 2021/11/18
+ */
 @RestController
 @RequestMapping("/menu")
 public class MenuController {
@@ -26,10 +28,11 @@ public class MenuController {
     private MenuService menuService;
 
     /**
-    * 新增记录
-    * @param menu 实体对象
-    * @return 结果
-    */
+     * 新增记录
+     *
+     * @param menu 实体对象
+     * @return 结果
+     */
     @PostMapping("/add")
     public Result add(@RequestBody Menu menu) {
         menuService.save(menu);
@@ -37,10 +40,11 @@ public class MenuController {
     }
 
     /**
-    * 删除记录
-    * @param id 主键
-    * @return 结果
-    */
+     * 删除记录
+     *
+     * @param id 主键
+     * @return 结果
+     */
     @PostMapping("/delete")
     public Result delete(@RequestParam String id) {
         menuService.deleteById(id);
@@ -48,10 +52,11 @@ public class MenuController {
     }
 
     /**
-    * 更新记录
-    * @param menu 实体对象
-    * @return 结果
-    */
+     * 更新记录
+     *
+     * @param menu 实体对象
+     * @return 结果
+     */
     @PostMapping("/update")
     public Result update(@RequestBody Menu menu) {
         menuService.update(menu);
@@ -61,17 +66,19 @@ public class MenuController {
 
     /**
      * 查询菜单的权限
-     * @param menuNo 菜单编号
+     *
+     * @param menuNo   菜单编号
      * @param roleFlag 权限标识
      * @return
      */
     @PostMapping("/roles")
-    public Result findRoles(@RequestParam String menuNo,@RequestParam String roleFlag) {
+    public Result findRoles(@RequestParam String menuNo, @RequestParam String roleFlag) {
         return ResultGenerator.genSuccessResult(menuService.findMenuRoles(menuNo, roleFlag));
     }
 
     /**
      * 修改菜单权限
+     *
      * @param menuRoleEditDto 修改
      * @return
      */
@@ -82,10 +89,11 @@ public class MenuController {
     }
 
     /**
-    * 通过主键查询记录
-    * @param id 主键
-    * @return 结果
-    */
+     * 通过主键查询记录
+     *
+     * @param id 主键
+     * @return 结果
+     */
     @PostMapping("/detail")
     public Result<Menu> detail(@RequestParam String id) {
         Menu menu = menuService.findById(id);
@@ -94,11 +102,12 @@ public class MenuController {
 
 
     /**
-    * 分页查询记录，默认查询所有
-    * @param page 页码
-    * @param size 每页记录数
-    * @return
-    */
+     * 分页查询记录，默认查询所有
+     *
+     * @param page 页码
+     * @param size 每页记录数
+     * @return
+     */
     @PostMapping("/list")
     public Result<PageInfo<Menu>> list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
@@ -110,6 +119,7 @@ public class MenuController {
 
     /**
      * 查询菜单树图
+     *
      * @return
      */
     @PostMapping("/getMenuTree")
@@ -117,5 +127,14 @@ public class MenuController {
         return ResultGenerator.genSuccessResult(menuService.getMenuTree());
     }
 
+    /**
+     * 查询菜单路由
+     *
+     * @return
+     */
+    @PostMapping("/getMenuRouter")
+    public Result<List<MenuRouterDto>> getMenuRouter() {
+        return ResultGenerator.genSuccessResult(menuService.getMenuRouter());
+    }
 
 }

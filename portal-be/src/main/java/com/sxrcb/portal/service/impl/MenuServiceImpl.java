@@ -1,8 +1,12 @@
 package com.sxrcb.portal.service.impl;
 
+import cn.dev33.satoken.stp.StpUtil;
 import com.github.pagehelper.util.StringUtil;
+import com.sxrcb.portal.constant.RoleFlag;
 import com.sxrcb.portal.dto.MenuRoleEditDto;
+import com.sxrcb.portal.dto.MenuRouterDto;
 import com.sxrcb.portal.dto.TreeViewDto;
+import com.sxrcb.portal.dto.UserInfoDto;
 import com.sxrcb.portal.entity.Menu;
 import com.sxrcb.portal.mapper.MenuMapper;
 import com.sxrcb.portal.service.MenuService;
@@ -11,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -110,7 +115,51 @@ public class MenuServiceImpl implements MenuService {
     public List<TreeViewDto> getMenuTree() {
         List<Menu> menus = portalMenuMapper.selectAll();
         List<Menu> collect = menus.stream().filter(item -> StringUtil.isEmpty(item.getParentMenuNo())).collect(Collectors.toList());
-        return orgListToTree(collect, menus);
+        return menuListToTree(collect, menus);
+    }
+
+    /**
+     * 查询菜单树图
+     * @return
+     */
+    @Override
+    public List<MenuRouterDto> getMenuRouter() {
+        List<Menu> menus = portalMenuMapper.selectAll();
+        List<Menu> collect = menus.stream().filter(item -> StringUtil.isEmpty(item.getParentMenuNo())).collect(Collectors.toList());
+        return menuRouterDtoList(collect, menus);
+    }
+
+    /**
+     * 查询菜单路由的递归
+     * @param topNode
+     * @param allMenus
+     * @return
+     */
+    private List<MenuRouterDto> menuRouterDtoList(List<Menu> topNode, List<Menu> allMenus) {
+        UserInfoDto userInfoDto = (UserInfoDto) StpUtil.getTokenSession().get("userInfo");
+
+        return topNode.stream().map(item -> {
+            String menuNo = item.getMenuNo();
+            String roleFlag = item.getRoleFlag();
+            List<String> roleList = RoleFlag._01.getCode().equals(roleFlag) ? userInfoDto.getRoleList() : userInfoDto.getPosList();
+            // 查询当前用户是否拥有菜单权限
+            int i = roleList.size()> 0 ? portalMenuMapper.checkMenuRole(roleList, menuNo, roleFlag) : 0;
+            if (i > 0) {
+                 // 当有权限时添加展示路由
+                MenuRouterDto menuRouterDto = new MenuRouterDto();
+                menuRouterDto.setIcon(item.getIcon());
+                menuRouterDto.setMenuName(item.getMenuName());
+                menuRouterDto.setRouter(item.getRouter());
+                // 判断是否拥有子节点
+                List<Menu> childrenListr = allMenus.stream()
+                        .filter(childItem -> item.getMenuNo().equals(childItem.getParentMenuNo())).collect(Collectors.toList());
+                if (childrenListr.size() > 0) {
+                    menuRouterDto.setChildren(this.menuRouterDtoList(childrenListr, allMenus));
+                }
+                return menuRouterDto;
+            }
+            return null;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**
@@ -120,7 +169,7 @@ public class MenuServiceImpl implements MenuService {
      * @param allDeps 所有树图列表
      * @return
      */
-    private List<TreeViewDto> orgListToTree(List<Menu> topNode, List<Menu> allDeps) {
+    private List<TreeViewDto> menuListToTree(List<Menu> topNode, List<Menu> allDeps) {
         return topNode.stream().map(item -> {
             TreeViewDto treeViewDto = new TreeViewDto();
             treeViewDto.setKey(item.getMenuNo());
@@ -129,12 +178,17 @@ public class MenuServiceImpl implements MenuService {
 
             List<Menu> childrenListr = allDeps.stream()
                     .filter(childItem -> item.getMenuNo().equals(childItem.getParentMenuNo())).collect(Collectors.toList());
-            if (childrenListr != null && childrenListr.size() > 0) {
+            if (childrenListr.size() > 0) {
                 treeViewDto.setSlots(new TreeViewDto.SlotsEntity("bars"));
-                treeViewDto.setChildren(this.orgListToTree(childrenListr, allDeps));
+                treeViewDto.setChildren(this.menuListToTree(childrenListr, allDeps));
             }
             return treeViewDto;
         }).collect(Collectors.toList());
     }
+
+
+
+
+
 
 }

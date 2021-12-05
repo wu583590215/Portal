@@ -13,7 +13,6 @@
                     <div style="line-height: 11px">{{menuitem.menuName}}</div>
                 </a-menu-item>
             </a-menu>
-
         </a-col>
 
         <a-col :span="22" style="height: 100%">
@@ -29,20 +28,18 @@
 
 <script>
     import router from "../../router/router";
+
     // 系统管理导航页面
     export default {
-        name: 'SystemMenu',
+        name: 'SecondaryIndex.vue',
+        props: {
+            menus: Array
+        },
         data() {
             return {
                 collapsed: false,
-                selectedMenu:[],
-                menuList:[
-                    {menuName:'用户管理',router:'employee', icon: 'user-add'},
-                    {menuName:'机构管理',router:'department',icon: 'apartment'},
-                    {menuName:'岗位管理',router:'position',icon: 'audit'},
-                    {menuName:'角色管理',router:'role',icon: 'key'},
-                    {menuName:'菜单管理',router:'menu',icon: 'menu-fold'},
-                ]
+                selectedMenu: [],
+                menuList: this.menus
             };
         },
         methods: {

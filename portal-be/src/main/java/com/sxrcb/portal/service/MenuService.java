@@ -1,6 +1,7 @@
 package com.sxrcb.portal.service;
 
 import com.sxrcb.portal.dto.MenuRoleEditDto;
+import com.sxrcb.portal.dto.MenuRouterDto;
 import com.sxrcb.portal.dto.TreeViewDto;
 import com.sxrcb.portal.entity.Menu;
 
@@ -61,4 +62,11 @@ public interface MenuService {
      * @return
      */
     List<String> findMenuRoles(String menuNo, String roleFlag);
+
+
+    /**
+     * 查询菜单路由
+     * @return
+     */
+    List<MenuRouterDto> getMenuRouter();
 }

@@ -1,8 +1,8 @@
 <template>
-    <div>
-        <a-row :gutter="20" style="display: flex">
-            <a-col :span="8" >
-                <a-card class="box-card" >
+    <div style="height: 100%">
+        <a-row :gutter="20" style="display: flex;height: 45%">
+            <a-col :span="6" >
+                <a-card  :bordered="false" class="box-card" >
                     <div slot="title" class="clearfix">
                         <span>系统导航</span>
                     </div>
@@ -78,8 +78,8 @@
                 </a-card>
             </a-col>
 
-            <a-col :span="16">
-                <a-card class="box-card" >
+            <a-col :span="10">
+                <a-card  :bordered="false" class="box-card" >
                     <div slot="title" class="clearfix">
                         <span>代办任务</span>
                     </div>
@@ -117,11 +117,23 @@
 
                 </a-card>
             </a-col>
+
+            <a-col :span="8" >
+                <a-card  :bordered="false" class="box-card" >
+                    <div slot="title" class="clearfix">
+                        <span><a-icon type="calendar" />工作日历</span>
+                    </div>
+
+                    <div style="height: 400px;overflow: auto">
+                        <test></test>
+                    </div>
+                </a-card>
+            </a-col>
         </a-row>
 
         <a-row :gutter="20" style="display: flex;margin-top: 20px;padding-bottom: 20px">
             <a-col :span="8" >
-                <a-card class="box-card" >
+                <a-card  :bordered="false" class="box-card" >
                     <div slot="title" class="clearfix">
                         <span>消息通知</span>
                     </div>
@@ -190,7 +202,7 @@
                 </a-card>
             </a-col>
             <a-col :span="8" >
-                <a-card class="box-card" >
+                <a-card  :bordered="false" class="box-card" >
                     <div slot="title" class="clearfix">
                         <span>个人绩效统计</span>
                     </div>
@@ -202,7 +214,7 @@
                 </a-card>
             </a-col>
             <a-col :span="8" >
-                <a-card class="box-card" >
+                <a-card  :bordered="false" class="box-card" >
                     <div slot="title" class="clearfix">
                         <span>个人业绩统计</span>
                     </div>
@@ -282,11 +294,13 @@
 
 <script>
 
+    import Test from "@/components/test";
     var echarts = require('echarts');
 
 
     export default {
         name: "Home",
+        components: {Test},
         data: function () {
             return {}
         },
@@ -322,8 +336,11 @@
 </script>
 
 <style scoped>
+    .ant-card-head-title {
+        padding: 10px 0;
+    }
 
-    .a-card__body {
+    .a-card_body {
         padding: 15px;
     }
 

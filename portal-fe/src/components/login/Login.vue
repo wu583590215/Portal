@@ -78,9 +78,9 @@
                             sessionStorage.setItem("satoken", res.tokenValue);
                             // 存储userInfo到缓存中
                             that.$axios.post("user/userInfo", data).then(function (userInfocache) {
-                                sessionStorage.setItem("userInfo", userInfocache);
+                                sessionStorage.setItem("userInfo", JSON.stringify(userInfocache));
+                                router.push({name: 'index'})
                             });
-                            router.push({name: 'index'})
                         })
                     }
                 });

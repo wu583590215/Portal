@@ -74,7 +74,7 @@
                 selectedMenu: [],
                 selectedMenuItem: null,
                 menuList: [],
-                userName: '系统管理员'
+                userName: ''
             }
         },
         methods: {
@@ -110,7 +110,7 @@
                 });
             }
         },
-        beforeCreate: function () {
+        mounted: function () {
             // 进页面时获取路由名称
             var that = this;
             this.$axios.post("menu/getMenuRouter").then(function (res) {
@@ -119,6 +119,9 @@
                 that.selectedTopMenuName = that.$route.matched[1].name;
                 that.selectedMenuItem = that._.find(res,{"router": that.selectedTopMenuName});
             });
+            console.log(JSON.parse(sessionStorage.getItem("userInfo")));
+            that.userName = JSON.parse(sessionStorage.getItem("userInfo")).userName;
+
         }
     }
 </script>
@@ -191,6 +194,7 @@
         width: 100%;
         display: flex;
         justify-content: space-between;
+        box-shadow: 0 2px 5px #0000004d;
     }
 
     .el-card__body {
